@@ -15,7 +15,7 @@
 
 int main() {
 
-    std::cout << "Z80 Emulator\n ";
+    std::cout << "Z80 Emulator\n";
 
     z80::memory<0x0000, 0x03FF> ram;
 
