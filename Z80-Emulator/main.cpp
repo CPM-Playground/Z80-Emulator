@@ -17,19 +17,13 @@ int main() {
 
     std::cout << "Z80 Emulator\n";
 
-    z80::memory<0x0000, 0x03FF> ram;
-
     try {
 
-        std::cout << ram.size() << " bytes\n";
+        const z80::memory<0x0000, 0x1FFF> rom("zx81.rom");
+        std::cout << rom.size() << " bytes\n";
+        rom.dump(0x0000, 0x01FF);
 
-        ram.fill(0x0010, 0x0030, '!');
-
-        ram[17] = 'A';
-
-        std::cout << ram[17] << '\n';
-
-        ram.dump(0x0000, 0x00FF);
+        
     }
     catch (std::exception& e) {
         std::cout << e.what() << '\n';

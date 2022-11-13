@@ -11,11 +11,13 @@
 #pragma once
 
 #include <array>
+#include <filesystem>
 #include <format>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <random>
-
+#include <string>
 
 #include "memory_types.h"
 
@@ -36,6 +38,26 @@ namespace z80 {
             }
         }
 
+        memory(std::string filename) : bytes(new byte_array{}) {
+            const std::filesystem::path fpath(filename);
+            if (!std::filesystem::exists(fpath)) {
+                throw std::runtime_error(fpath.string() + " file not found");
+            }
+            std::ifstream f;
+            auto fsize = std::filesystem::file_size(fpath);
+            if (size() < fsize) {
+                throw std::runtime_error(fpath.string() + std::format(" file size {} bytes exceeds memory size {} bytes", fsize, size()));
+            }
+            f.open(fpath);
+            char b;
+            address_t addr{ 0 };
+            while (f.get(b)) {
+                bytes->at(addr++) = b;
+            }
+            std::cout << addr << '\n';
+            f.close();
+        }
+
         inline byte_t operator[](address_t addr) const {
             return bytes->at(addr - BEGIN);
         }
@@ -45,8 +67,7 @@ namespace z80 {
         }
 
         void dump(address_t begin, address_t end) const {
-            end -= begin;
-            for (auto i{ 0 }; i < end; i += 16) {
+            for (auto i{ begin }; i < end; i += 16) {
                 dump_paragraph(i);
             }
         }
@@ -59,12 +80,9 @@ namespace z80 {
             }
             std::cout << "| ";
             for (auto i{ 0 }; i < 16; ++i) {
-                if (bytes->at(addr + i) < 32) {
-                    std::cout << ' ';
-                }
-                else {
-                    std::cout << bytes->at(addr + i);
-                }
+                char c = bytes->at(addr + i);
+                if ((c == 127) || (c >= 0) && (c < 32)) std::cout << '.';
+                else std::cout << c;
             }
             std::cout << " |\n";
         }
