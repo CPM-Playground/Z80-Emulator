@@ -26,5 +26,8 @@
     <ClInclude Include="z80_memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="z80_registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

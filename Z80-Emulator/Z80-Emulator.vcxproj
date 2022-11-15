@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="z80_memory.h" />
     <ClInclude Include="z80_memory_types.h" />
+    <ClInclude Include="z80_registers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
