@@ -20,10 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="memory_types.h">
+    <ClInclude Include="z80_memory_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memory.h">
+    <ClInclude Include="z80_memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

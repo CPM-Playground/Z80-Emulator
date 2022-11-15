@@ -22,7 +22,7 @@
 #include <random>
 #include <string>
 
-#include "memory_types.h"
+#include "z80_memory_types.h"
 
 namespace z80 {
 
@@ -30,20 +30,20 @@ namespace z80 {
     template<address_t BEGIN, address_t END>
     class memory {
 
-        using byte_array = std::array<byte_t, END - BEGIN + 1>;
-        using mem = std::unique_ptr<byte_array>;
+        using byte_array_t = std::array<byte_t, END - BEGIN + 1>;
+        using byte_array_ptr_t = std::unique_ptr<byte_array_t>;
 
     public:
 
-        memory() : bytes(new byte_array{}) {
+        memory() : bytes(new byte_array_t{}) {
             randomize();
         }
 
-        memory(byte_t b) : bytes(new byte_array{}) {
+        memory(byte_t b) : bytes(new byte_array_t{}) {
             fill(b);
         }
 
-        memory(const std::string& filename) : bytes(new byte_array{}) {
+        memory(const std::string& filename) : bytes(new byte_array_t{}) {
             load(filename);
         }
 
@@ -56,6 +56,10 @@ namespace z80 {
         }
 
         void dump(address_t begin = BEGIN, address_t end = END + 1) const {
+            auto dump_size = end - begin;
+            if (dump_size > size()) {
+                throw std::runtime_error(std::format(" memory overflow: requested dump size {} bytes larger than memory size {} bytes", dump_size, size()));
+            }
             for (auto i{ begin }; i < end; i += 16) {
                 dump_paragraph(i);
             }
@@ -79,6 +83,10 @@ namespace z80 {
         void fill(byte_t b, address_t begin = BEGIN, address_t end = END + 1) {
             end -= begin;
             begin -= BEGIN;
+            auto fill_size = end - begin;
+            if (fill_size > size()) {
+                throw std::runtime_error(std::format(" memory overflow: requested fill size {} bytes larger than memory size {} bytes", fill_size, size()));
+            }
             for (auto i{ 0 }; i < end; ++i) {
                 bytes->at(begin + i) = b;
             }
@@ -90,9 +98,9 @@ namespace z80 {
                 throw std::runtime_error(fpath.string() + " file not found");
             }
             std::ifstream f;
-            auto fsize = std::filesystem::file_size(fpath);
-            if (fsize < size()) {
-                throw std::runtime_error(fpath.string() + std::format(" file size {} bytes smaller than memory size {} bytes", fsize, size()));
+            auto file_size = std::filesystem::file_size(fpath);
+            if (file_size < size()) {
+                throw std::runtime_error(fpath.string() + std::format(" memory overflow: file size {} bytes larger than memory size {} bytes", file_size, size()));
             }
             f.open(fpath, std::ios::binary);
             f.read((char*)bytes->data(), size());
@@ -105,13 +113,31 @@ namespace z80 {
             }
         }
 
+        void save(const std::string& filename, address_t begin = BEGIN, address_t end = END + 1) const {
+            auto save_size = end - begin;
+            begin -= BEGIN;
+            if (save_size > size()) {
+                throw std::runtime_error(std::format(" memory overflow: requested save size {} bytes larger than memory size {} bytes", save_size, size()));
+            }
+            const std::filesystem::path fpath(filename);
+            if (!std::filesystem::exists(fpath)) {
+                std::ofstream f;
+                f.open(fpath, std::ios::binary);
+                f.write((char*)(bytes->data() + begin), save_size);
+                f.close();
+            }
+            else {
+                throw std::runtime_error(fpath.string() + " file already exists");
+            }
+        }
+
         size_t static size() {
             return END - BEGIN + 1;
         }
 
     private:
 
-        mem bytes;
+        byte_array_ptr_t bytes;
 
         static std::mt19937 rand;
         static std::uniform_int_distribution<std::mt19937::result_type> distribution;

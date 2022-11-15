@@ -11,7 +11,7 @@
 #include <iostream>
 #include <exception>
 
-#include "memory.h"
+#include "z80_memory.h"
 
 int main() {
 
@@ -19,9 +19,10 @@ int main() {
 
     try {
 
-        const z80::memory<0x1000, 0x2FFF> rom{};
+        const z80::memory<0x1000, 0x2FFF> rom("zx81-v2.rom");
         std::cout << rom.size() << " bytes\n";
         rom.dump();
+        rom.save("zx81-v2.copy");
 
         
     }
