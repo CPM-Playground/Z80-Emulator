@@ -33,17 +33,32 @@ namespace z80 {
         using byte_array_t = std::array<byte_t, END - BEGIN + 1>;
         using byte_array_ptr_t = std::unique_ptr<byte_array_t>;
 
+        static const char ASCII_NULL = 0;
+        static const char ASCII_SPACE = 32;
+        static const char ASCII_DEL = 127;
+
+        static const size_t PARAGRAPH = 16;
+
     public:
 
-        memory() : bytes(new byte_array_t{}) {
+        memory() : 
+            column_count((size() < PARAGRAPH) ? size() : PARAGRAPH), 
+            bytes(new byte_array_t{}) 
+        {
             randomize();
         }
 
-        memory(byte_t b) : bytes(new byte_array_t{}) {
+        memory(byte_t b) :
+            column_count((size() < PARAGRAPH) ? size() : PARAGRAPH),
+            bytes(new byte_array_t{})
+        {
             fill(b);
         }
 
-        memory(const std::string& filename) : bytes(new byte_array_t{}) {
+        memory(const std::string& filename) :
+            column_count((size() < PARAGRAPH) ? size() : PARAGRAPH),
+            bytes(new byte_array_t{})
+        {
             load(filename);
         }
 
@@ -60,7 +75,7 @@ namespace z80 {
             if (dump_size > size()) {
                 throw std::runtime_error(std::format(" memory overflow: requested dump size {} bytes larger than memory size {} bytes", dump_size, size()));
             }
-            for (auto i{ begin }; i < end; i += 16) {
+            for (auto i{ begin }; i < end; i += PARAGRAPH) {
                 dump_paragraph(i);
             }
         }
@@ -68,13 +83,13 @@ namespace z80 {
         void dump_paragraph(address_t addr) const {
             std::cout << std::format("${:04X} ", addr);
             addr -= BEGIN;
-            for (auto i{ 0 }; i < 16; ++i) {
+            for (auto i{ 0 }; i < column_count; ++i) {
                 std::cout << std::format("{:02X} ", (uint8_t)bytes->at(addr + i));
             }
             std::cout << "| ";
-            for (auto i{ 0 }; i < 16; ++i) {
+            for (auto i{ 0 }; i < column_count; ++i) {
                 char c = bytes->at(addr + i);
-                if ((c == 127) || (c >= 0) && (c < 32)) std::cout << '.';
+                if ((c == ASCII_DEL) || (c >= ASCII_NULL) && (c < ASCII_SPACE)) std::cout << '.';
                 else std::cout << c;
             }
             std::cout << " |\n";
@@ -87,7 +102,7 @@ namespace z80 {
             if (fill_size > size()) {
                 throw std::runtime_error(std::format(" memory overflow: requested fill size {} bytes larger than memory size {} bytes", fill_size, size()));
             }
-            for (auto i{ 0 }; i < end; ++i) {
+            for (auto i{ begin }; i < end; ++i) {
                 bytes->at(begin + i) = b;
             }
         }
@@ -95,7 +110,7 @@ namespace z80 {
         void load(const std::string& filename) {
             const std::filesystem::path fpath(filename);
             if (!std::filesystem::exists(fpath)) {
-                throw std::runtime_error(fpath.string() + " file not found");
+                throw std::runtime_error("file load error: \"" + fpath.string() + "\" file not found");
             }
             std::ifstream f;
             auto file_size = std::filesystem::file_size(fpath);
@@ -127,7 +142,7 @@ namespace z80 {
                 f.close();
             }
             else {
-                throw std::runtime_error(fpath.string() + " file already exists");
+                throw std::runtime_error("file save error: \"" + fpath.string() + "\" file already exists");
             }
         }
 
@@ -136,6 +151,8 @@ namespace z80 {
         }
 
     private:
+
+        size_t column_count;
 
         byte_array_ptr_t bytes;
 
