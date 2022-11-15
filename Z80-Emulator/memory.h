@@ -1,8 +1,11 @@
 /**
 
     @file      memory.h
-    @brief     
-    @details   ~
+    @brief     emulates a block of memory bytes of any size and address location
+    @details   as far as teh Z80 emulator is concerned the memory block emulator need only provide 
+               the const and non-const array accessors:
+               + byte_t operator[](address_t addr) const
+               + byte_t& operator[](address_t addr)
     @author    ifknot
     @date      12.11.2022
     @copyright © ifknot, 2022. All right reserved.
@@ -34,6 +37,10 @@ namespace z80 {
 
         memory() : bytes(new byte_array{}) {
             randomize();
+        }
+
+        memory(byte_t b) : bytes(new byte_array{}) {
+            fill(b);
         }
 
         memory(const std::string& filename) : bytes(new byte_array{}) {
@@ -69,7 +76,7 @@ namespace z80 {
             std::cout << " |\n";
         }
 
-        void fill(address_t begin, address_t end, byte_t b) {
+        void fill(byte_t b, address_t begin = BEGIN, address_t end = END + 1) {
             end -= begin;
             begin -= BEGIN;
             for (auto i{ 0 }; i < end; ++i) {
@@ -92,9 +99,9 @@ namespace z80 {
             f.close();
         }
 
-        void randomize() {
+        void randomize(uint32_t min = 0, uint32_t max = 255) {
             for (auto addr{ 0 }; addr < size(); ++addr) {
-                bytes->at(addr) = distribution(rand) % 255;
+                bytes->at(addr) = min + (distribution(rand) % (max - min + 1));
             }
         }
 
@@ -106,9 +113,15 @@ namespace z80 {
 
         mem bytes;
 
-        std::mt19937 rand;
-        std::uniform_int_distribution<std::mt19937::result_type> distribution;
+        static std::mt19937 rand;
+        static std::uniform_int_distribution<std::mt19937::result_type> distribution;
 
     };
+
+     template<address_t BEGIN, address_t END>
+     std::mt19937 memory<BEGIN, END>::rand = std::mt19937{};
+
+     template<address_t BEGIN, address_t END>
+     std::uniform_int_distribution<std::mt19937::result_type> memory<BEGIN, END>::distribution = std::uniform_int_distribution<std::mt19937::result_type>{};
 
 }

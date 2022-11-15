@@ -19,7 +19,7 @@ int main() {
 
     try {
 
-        const z80::memory<0x0000, 0x1FFF> rom("zx81-v2.rom");
+        const z80::memory<0x1000, 0x2FFF> rom{};
         std::cout << rom.size() << " bytes\n";
         rom.dump();
 
