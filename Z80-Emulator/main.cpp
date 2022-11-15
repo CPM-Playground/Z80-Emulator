@@ -19,8 +19,8 @@ int main() {
 
     try {
 
-        const z80::memory<0x1000, 0x2FFF> rom("zx81-v2.rom");
-        std::cout << rom.size() << " bytes\n";
+        const z80::memory<0x1000, 0x10FF> rom("zx81-v2.rom");
+        std::cout << std::format("address ${:04X} .. ${:04X} size {} bytes\n", rom.address_begin(), rom.address_end(), rom.size());
         rom.dump();
         rom.save("zx81-v2.copy");
 

@@ -63,11 +63,19 @@ namespace z80 {
         }
 
         inline byte_t operator[](address_t addr) const {
-            return bytes->at(addr - BEGIN);
+            return bytes->at((size_t)addr - BEGIN);
         }
 
         inline byte_t& operator[](address_t addr) {
-            return bytes->at(addr - BEGIN);
+            return bytes->at((size_t)addr - BEGIN);
+        }
+
+        static inline address_t address_begin() {
+            return BEGIN;
+        }
+
+        static inline address_t address_end() {
+            return END;
         }
 
         void dump(address_t begin = BEGIN, address_t end = END + 1) const {
@@ -84,11 +92,11 @@ namespace z80 {
             std::cout << std::format("${:04X} ", addr);
             addr -= BEGIN;
             for (address_t i{ 0 }; i < column_count; ++i) {
-                std::cout << std::format("{:02X} ", (uint8_t)bytes->at(addr + i));
+                std::cout << std::format("{:02X} ", (uint8_t)bytes->at((size_t)addr + i));
             }
             std::cout << "| ";
             for (address_t i{ 0 }; i < column_count; ++i) {
-                char c = bytes->at(addr + i);
+                char c = bytes->at((size_t)addr + i);
                 if ((c == ASCII_DEL) || (c >= ASCII_NULL) && (c < ASCII_SPACE)) std::cout << '.';
                 else std::cout << c;
             }
@@ -103,7 +111,7 @@ namespace z80 {
                 throw std::runtime_error(std::format(" memory overflow: requested fill size {} bytes larger than memory size {} bytes", fill_size, size()));
             }
             for (auto i{ begin }; i < end; ++i) {
-                bytes->at(begin + i) = b;
+                bytes->at((size_t)begin + i) = b;
             }
         }
 
@@ -146,7 +154,7 @@ namespace z80 {
             }
         }
 
-        size_t static size() {
+        static inline size_t size() {
             return END - BEGIN + 1;
         }
 
