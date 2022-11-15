@@ -83,11 +83,11 @@ namespace z80 {
         void dump_paragraph(address_t addr) const {
             std::cout << std::format("${:04X} ", addr);
             addr -= BEGIN;
-            for (auto i{ 0 }; i < column_count; ++i) {
+            for (address_t i{ 0 }; i < column_count; ++i) {
                 std::cout << std::format("{:02X} ", (uint8_t)bytes->at(addr + i));
             }
             std::cout << "| ";
-            for (auto i{ 0 }; i < column_count; ++i) {
+            for (address_t i{ 0 }; i < column_count; ++i) {
                 char c = bytes->at(addr + i);
                 if ((c == ASCII_DEL) || (c >= ASCII_NULL) && (c < ASCII_SPACE)) std::cout << '.';
                 else std::cout << c;
