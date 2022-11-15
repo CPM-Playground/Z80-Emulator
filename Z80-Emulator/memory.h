@@ -33,29 +33,11 @@ namespace z80 {
     public:
 
         memory() : bytes(new byte_array{}) {
-            for (auto addr{ 0 }; addr < size(); ++addr) {
-                bytes->at(addr) = distribution(rand) % 255;
-            }
+            randomize();
         }
 
-        memory(std::string filename) : bytes(new byte_array{}) {
-            const std::filesystem::path fpath(filename);
-            if (!std::filesystem::exists(fpath)) {
-                throw std::runtime_error(fpath.string() + " file not found");
-            }
-            std::ifstream f;
-            auto fsize = std::filesystem::file_size(fpath);
-            if (size() < fsize) {
-                throw std::runtime_error(fpath.string() + std::format(" file size {} bytes exceeds memory size {} bytes", fsize, size()));
-            }
-            f.open(fpath);
-            char b;
-            address_t addr{ 0 };
-            while (f.get(b)) {
-                bytes->at(addr++) = b;
-            }
-            std::cout << addr << '\n';
-            f.close();
+        memory(const std::string& filename) : bytes(new byte_array{}) {
+            load(filename);
         }
 
         inline byte_t operator[](address_t addr) const {
@@ -66,7 +48,7 @@ namespace z80 {
             return bytes->at(addr - BEGIN);
         }
 
-        void dump(address_t begin, address_t end) const {
+        void dump(address_t begin = BEGIN, address_t end = END + 1) const {
             for (auto i{ begin }; i < end; i += 16) {
                 dump_paragraph(i);
             }
@@ -87,7 +69,7 @@ namespace z80 {
             std::cout << " |\n";
         }
 
-        void fill(address_t begin, address_t end, byte_t b) const {
+        void fill(address_t begin, address_t end, byte_t b) {
             end -= begin;
             begin -= BEGIN;
             for (auto i{ 0 }; i < end; ++i) {
@@ -95,8 +77,29 @@ namespace z80 {
             }
         }
 
-        size_t size() const {
-            return bytes->size();
+        void load(const std::string& filename) {
+            const std::filesystem::path fpath(filename);
+            if (!std::filesystem::exists(fpath)) {
+                throw std::runtime_error(fpath.string() + " file not found");
+            }
+            std::ifstream f;
+            auto fsize = std::filesystem::file_size(fpath);
+            if (fsize < size()) {
+                throw std::runtime_error(fpath.string() + std::format(" file size {} bytes smaller than memory size {} bytes", fsize, size()));
+            }
+            f.open(fpath, std::ios::binary);
+            f.read((char*)bytes->data(), size());
+            f.close();
+        }
+
+        void randomize() {
+            for (auto addr{ 0 }; addr < size(); ++addr) {
+                bytes->at(addr) = distribution(rand) % 255;
+            }
+        }
+
+        size_t static size() {
+            return END - BEGIN + 1;
         }
 
     private:
