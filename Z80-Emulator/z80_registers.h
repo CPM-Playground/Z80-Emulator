@@ -95,9 +95,45 @@
 
     @author    ifknot
     @date      15.11.2022
-    @copyright © ifknot, 2022. All right reserved.
+    @copyright Â© ifknot, 2022. All right reserved.
 
 **/
+
+/*
+
+#include <array>
+#include <cstdint>
+#include <iostream>
+
+struct registers_t {
+  
+  using register_array_t = int8_t[26]; 
+
+  int8_t& byte(size_t i) {
+    return data[i];
+  } 
+  
+  int16_t& word(size_t i) {
+    return *(int16_t*)(data + i);
+  }
+  
+  register_array_t data;
+  
+};
+
+int main()  {
+    
+    registers_t r;
+    r.byte(2) = 'A';
+    r.byte(3) = 'B';
+    std::cout << r.byte(2) << ' ' << r.byte(3) << ' '<< std::hex << r.word(2) << '\n';
+    r.word(2) = 0x4443;
+    std::cout << r.byte(2) << ' ' << r.byte(3) << ' '<< std::hex << r.word(2) << '\n';
+    
+}
+
+*/
+
 #pragma once
 
 #include <array>
