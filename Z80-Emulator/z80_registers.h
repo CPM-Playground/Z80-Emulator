@@ -105,6 +105,10 @@
 #include <cstdint>
 #include <iostream>
 
+#define _F r.byte(0)
+#define _A r.byte(1)
+#define _AF r.word(0)
+
 struct registers_t {
   
   using register_array_t = int8_t[26]; 
@@ -129,6 +133,11 @@ int main()  {
     std::cout << r.byte(2) << ' ' << r.byte(3) << ' '<< std::hex << r.word(2) << '\n';
     r.word(2) = 0x4443;
     std::cout << r.byte(2) << ' ' << r.byte(3) << ' '<< std::hex << r.word(2) << '\n';
+    _A = 'E';
+    _F = 'F';
+    std::cout << _A << ' ' << _F << ' ' << _AF << '\n';
+    _AF = 0x4847;
+    std::cout << _A << ' ' << _F << ' ' << _AF << '\n';
     
 }
 
