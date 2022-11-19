@@ -33,11 +33,11 @@ namespace z80 {
         using byte_array_t = std::array<byte_t, END - BEGIN + 1>;
         using byte_array_ptr_t = std::unique_ptr<byte_array_t>;
 
-        static const char ASCII_NULL = 0;
-        static const char ASCII_SPACE = 32;
-        static const char ASCII_DEL = 127;
+        static constexpr char ASCII_NULL = 0;
+        static constexpr char ASCII_SPACE = 32;
+        static constexpr char ASCII_DEL = 127;
 
-        static const size_t PARAGRAPH = 16;
+        static constexpr auto PARAGRAPH = 16;
 
     public:
 

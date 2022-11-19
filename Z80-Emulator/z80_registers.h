@@ -99,93 +99,43 @@
 
 **/
 
-/*
+#pragma once
 
 #include <array>
 #include <cstdint>
 #include <iostream>
 
-#define _F r.byte(0)
-#define _A r.byte(1)
-#define _AF r.word(0)
+constexpr auto Z80_REGISTER_COUNT = 26;
 
-struct registers_t {
-  
-  using register_array_t = int8_t[26]; 
-
-  int8_t& byte(size_t i) {
-    return data[i];
-  } 
-  
-  int16_t& word(size_t i) {
-    return *(int16_t*)(data + i);
-  }
-  
-  register_array_t data;
-  
-};
-
-int main()  {
-    
-    registers_t r;
-    r.byte(2) = 'A';
-    r.byte(3) = 'B';
-    std::cout << r.byte(2) << ' ' << r.byte(3) << ' '<< std::hex << r.word(2) << '\n';
-    r.word(2) = 0x4443;
-    std::cout << r.byte(2) << ' ' << r.byte(3) << ' '<< std::hex << r.word(2) << '\n';
-    _A = 'E';
-    _F = 'F';
-    std::cout << _A << ' ' << _F << ' ' << _AF << '\n';
-    _AF = 0x4847;
-    std::cout << _A << ' ' << _F << ' ' << _AF << '\n';
-    
-}
-
-*/
-
-#pragma once
-
-#include <array>
-#include <iostream>
-#include <memory>
-#include <string>
-
-#include "z80_memory_types.h"
-
-#define _A   regs[af].byte[LO]
-#define _F   regs[af].byte[HI]
-#define _AF  regs[af].word
+#define _F z80::regs.byte(0)
+#define _A z80::regs.byte(1)
+#define _AF z80::regs.word(0)
 
 namespace z80 {
 
-    union register_t {
-        word_t word;
-        byte_t byte[2];
+    template<size_t SIZE>
+    class registers_t {
+
+        using register_array_t = int8_t[SIZE];
+
+    public:
+
+        int8_t& byte(size_t i) {
+            return data[i];
+        }
+
+        int16_t& word(size_t i) {
+            return *(int16_t*)(data + i);
+        }
+
+    private:
+
+        register_array_t data;
+
     };
 
-    enum name_t {
-        // accumulator and flags
-        _af = 0,  
-        // general purpose registers
-        _bc = 2, 
-        _de = 4, 
-        _hl = 6,     
-        //alternate registers
-        __af = 8,
-        __bc = 10,
-        __de = 12,
-        __hl = 14,
-        // special purpose regsiters
-        _ix = 16,    // index x
-        _iy = 18,    // index y    
-        _sp = 20,    // stack pointer
-        _pc = 22,    // program counter 
-        __i,         // interrupt vector 
-        __r          // memory refresh
-    };
 
-    using register_array_t = std::array<register_t, 26>;    //
+    static registers_t<Z80_REGISTER_COUNT> regs;
 
-    static register_array_t regs;
 
 }
