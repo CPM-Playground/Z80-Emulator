@@ -37,6 +37,7 @@ int main() {
         std::cout << _A << ' ' << _F << ' ' << _AF << '\n';
         _AF = 0x4847;
         std::cout << _A << ' ' << _F << ' ' << _AF << '\n';
+        z80::regs.dump_flags();
         
     }
     catch (std::exception& e) {
