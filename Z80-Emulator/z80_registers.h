@@ -25,6 +25,10 @@
         Stack Pointer SP
         Program Counter PC
 
+    Shadow variants can't be directly accessed by any instruction othe then
+    + EX AF,AF' instruction will swap between AF and AF'
+    + EXX instruction will swap BC,DE,HL with BC',DE',HL'
+
     ##Special-Purpose Registers
     ###Program Counter (PC). 
     The program counter holds the 16-bit address of the current instruction being fetched from memory. 
@@ -196,9 +200,24 @@
 
 constexpr auto Z80_REGISTER_COUNT = 26;
 
-#define _F z80::regs.byte(0)
-#define _A z80::regs.byte(1)
-#define _AF z80::regs.word(0)
+#define _F  z80::regs.byte(z80::regs.F)
+#define _A  z80::regs.byte(z80::regs.A)
+#define _AF z80::regs.word(z80::regs.F)
+#define _B  z80::regs.byte(z80::regs.B)
+#define _C  z80::regs.byte(z80::regs.C)
+#define _BC z80::regs.word(z80::regs.B)
+#define _D  z80::regs.byte(z80::regs.D)
+#define _E  z80::regs.byte(z80::regs.E)
+#define _DE z80::regs.word(z80::regs.D)
+#define _H  z80::regs.byte(z80::regs.H)
+#define _L  z80::regs.byte(z80::regs.L)
+#define _HL z80::regs.word(z80::regs.H)
+#define _I  z80::regs.byte(z80::regs.I)
+#define _R  z80::regs.byte(z80::regs.R)
+#define _SP z80::regs.word(z80::regs.SP)
+#define _PC z80::regs.word(z80::regs.PC)
+#define _IX z80::regs.word(z80::regs.IX)
+#define _IY z80::regs.word(z80::regs.IY)
 
 #define CARRY   0b00000001
 #define NEGATE  0b00000010
@@ -215,6 +234,22 @@ namespace z80 {
         using register_array_t = int8_t[SIZE];
 
     public:
+
+        static auto constexpr F = 0;
+        static auto constexpr A = 1;
+        static auto constexpr B = 2;
+        static auto constexpr C = 3;
+        static auto constexpr D = 4;
+        static auto constexpr E = 5;
+        static auto constexpr H = 6;
+        static auto constexpr L = 7;
+        static auto constexpr I = 8;
+        static auto constexpr R = 9;
+        static auto constexpr SP = 10;
+        static auto constexpr PC = 12;
+        static auto constexpr IX = 14;
+        static auto constexpr IY = 16;
+        static auto constexpr _SHADOW = 18;
 
         inline int8_t& byte(size_t i) {
             return sram[i];
