@@ -38,7 +38,34 @@ int main() {
         _AF = 0x4847;
         std::cout << _A << ' ' << _F << ' ' << _AF << '\n';
         z80::regs.dump_flags();
-        
+        _F = 0;
+        z80::regs.dump_flags();
+        _F |= CARRY;
+        z80::regs.dump_flags();
+        //_F &= ~CARRY;
+        //z80::regs.dump_flags();
+        _F |= NEGATE;
+        z80::regs.dump_flags();
+        _F &= ~NEGATE;
+        z80::regs.dump_flags();
+        _F |= PARITY_OVERFLOW;
+        z80::regs.dump_flags();
+        _F &= ~PARITY_OVERFLOW;
+        z80::regs.dump_flags();
+        _F |= HALF_CARRY;
+        z80::regs.dump_flags();
+        _F &= ~HALF_CARRY;
+        z80::regs.dump_flags();
+        _F |= ZERO;
+        z80::regs.dump_flags();
+        _F &= ~ZERO;
+        z80::regs.dump_flags();
+        _F |= SIGN;
+        z80::regs.dump_flags();
+        _F &= ~SIGN;
+        z80::regs.dump_flags();
+        _F &= ~CARRY;
+        z80::regs.dump_flags();
     }
     catch (std::exception& e) {
         std::cout << e.what() << '\n';

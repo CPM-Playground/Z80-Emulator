@@ -200,6 +200,13 @@ constexpr auto Z80_REGISTER_COUNT = 26;
 #define _A z80::regs.byte(1)
 #define _AF z80::regs.word(0)
 
+#define CARRY   0b00000001
+#define NEGATE  0b00000010
+#define PARITY_OVERFLOW 0b00000100
+#define HALF_CARRY      0b00010000
+#define ZERO    0b01000000
+#define SIGN    0b10000000
+
 namespace z80 {
 
     template<size_t SIZE>
@@ -217,93 +224,18 @@ namespace z80 {
             return *(int16_t*)(sram + i);
         }
 
-        // making all the flag methods explicit to reduce errors emulating opcodes
+        void dump_registers() {
 
-        inline bool carry() const {
-            return sram[0] & 0b00000001;
-        }
-
-        inline void set_carry() {
-            flags() |= 0b000000001;
-        }
-
-        inline void clr_carry() {
-            flags() &= 0b11111110;
-        }
-
-        inline bool negate() const {
-            return sram[0] & 0b00000010;
-        }
-
-        inline void set_negate() {
-            flags() |= 0b000000010;
-        }
-
-        inline void clr_negate() {
-            flags() &= 0b11111101;
-        }
-
-        inline bool parity_overflow() const {
-            return sram[0] & 0b00000100;
-        }
-
-        inline void set_parity_overflow() {
-            flags() |= 0b000000100;
-        }
-
-        inline void clr_parity_overflow() {
-            flags() &= 0b11111011;
-        }
-
-        inline bool half_carry() const {
-            return sram[0] & 0b00010000;
-        }
-
-        inline void set_half_carry() {
-            flags() |= 0b00010000;
-        }
-
-        inline void clr_half_carry() {
-            flags() &= 0b11101111;
-        }
-
-        inline bool zero() const {
-            return sram[0] & 0b01000000;
-        }
-
-        inline void set_zero() {
-            flags() |= 0b01000000;
-        }
-
-        inline void clr_zero() {
-            flags() &= 0b10111111;
-        }
-
-        inline bool sign() const {
-            return sram[0] & 0b10000000;
-        }
-
-        inline void set_sign() {
-            flags() |= 0b100000000;
-        }
-
-        inline void clr_sign() {
-            flags() &= 0b01111111;
         }
 
         void dump_flags() {
-            std::cout << std::format("{:08b}\n|S|Z|x|H|y|P|N|C|\n|{}|{}| |{}| |{}|{}|{}|", 
-                flags(), fch(sign()), fch(zero()), fch(half_carry()), fch(parity_overflow()), fch(negate()), fch(carry()));
+            std::cout << std::format("\nSZ H PNC\n{:08b}", flags());
         }
 
     private:
 
-        inline int8_t& flags() {
+        inline uint8_t flags() const {
             return sram[0];
-        }
-
-        inline char fch(bool f) {
-            return f ? 'T' : 'F';
         }
 
         register_array_t sram;  // Z80 CPU's registers are implemented using static RAM.
