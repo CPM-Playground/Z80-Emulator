@@ -139,6 +139,7 @@
     <ClInclude Include="test_registers.h" />
     <ClInclude Include="test_rom.h" />
     <ClInclude Include="z80_registers.h" />
+    <ClInclude Include="zx80_disassembler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

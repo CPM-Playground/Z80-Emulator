@@ -13,14 +13,14 @@ namespace test_rom {
         std::cout << "test ROM... ";
 
         try {
-            const emu::memory<1024> rom1(0x1000);// , "zx81-v2.rom");
+            const emu::memory<1024> rom1(0x1000);
             if (verbose) std::cout << std::format("{} bytes ${:04X} - ${:04X}", rom1.size(), rom1.address_begin(), rom1.address_end()) << '\n';
             if (verbose) rom1.dump();
             assert(rom1.size() == 0x400);
             assert(rom1.address_begin() == 0x1000);
             assert(rom1.address_end() == 0x13FF);
 
-            const emu::memory<1024> rom2(0x2000, 'A');// , "zx81-v2.rom");
+            const emu::memory<1024> rom2(0x2000, 'A');
             if (verbose) std::cout << std::format("{} bytes ${:04X} - ${:04X}", rom2.size(), rom2.address_begin(), rom2.address_end()) << '\n';
             if (verbose) rom2.dump();
             assert(rom2[0x2000] == 'A');

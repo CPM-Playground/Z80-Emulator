@@ -225,26 +225,3 @@ namespace emu {
     using z80_registers_t = registers_t<Z80_SRAM_SIZE>; // 208 bytes of SRAM
 
 }
-
-/*
-
-#define _F  emu::regs.byte(emu::regs.F)
-#define _A  emu::regs.byte(emu::regs.A)
-#define _AF emu::regs.word(emu::regs.F)
-#define _B  emu::regs.byte(emu::regs.B)
-#define _C  emu::regs.byte(emu::regs.C)
-#define _BC emu::regs.word(emu::regs.B)
-#define _D  emu::regs.byte(emu::regs.D)
-#define _E  emu::regs.byte(emu::regs.E)
-#define _DE emu::regs.word(emu::regs.D)
-#define _H  emu::regs.byte(emu::regs.H)
-#define _L  emu::regs.byte(emu::regs.L)
-#define _HL emu::regs.word(emu::regs.H)
-#define _I  emu::regs.byte(emu::regs.I)
-#define _R  emu::regs.byte(emu::regs.R)
-#define _SP emu::regs.word(emu::regs.SP)
-#define _PC emu::regs.word(emu::regs.PC)
-#define _IX emu::regs.word(emu::regs.IX)
-#define _IY emu::regs.word(emu::regs.IY)
-
-*/

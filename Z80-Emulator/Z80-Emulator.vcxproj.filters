@@ -44,5 +44,8 @@
     <ClInclude Include="test_registers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="zx80_disassembler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
