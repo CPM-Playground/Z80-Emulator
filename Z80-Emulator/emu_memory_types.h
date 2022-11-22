@@ -1,6 +1,6 @@
 /**
 
-    @file      memory_types.h
+    @file      emu_memory_types.h
     @brief     
     @details   ~
     @author    ifknot
@@ -16,7 +16,7 @@
 #define HI 1
 #define LO 0
 
-namespace z80 {
+namespace emu {
 
     using byte_t = int8_t;
     using word_t = int16_t;

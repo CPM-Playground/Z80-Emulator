@@ -20,13 +20,28 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="z80_memory_types.h">
+    <ClInclude Include="emu_memory_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="z80_memory.h">
+    <ClInclude Include="emu_memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="emu_registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_rom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_ram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="z80_registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_registers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

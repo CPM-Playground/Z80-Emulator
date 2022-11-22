@@ -2,7 +2,6 @@
 
     @file      z80_registers.h
     @brief     
-    @details  
     ##CPU Registers
     The Z80 CPU contains 208 bits (26 bytes) of read/write memory that are available to the programmer. 
     The table below shows how this memory is configured to eighteen 8-bit registers and four 16-bit registers. 
@@ -134,7 +133,7 @@
     The Decimal Adjust Accumulator (DAA) instruction uses this flag to distinguish between ADD and SUBTRACT instructions. For all ADD instructions, N sets to 0. For all SUBTRACT instructions, N sets to 1.
 
     ###Parity/Overflow Flag
-    The Parity/Overflow (P/V) Flag is set to a specific state depending on the operation being performed. For arithmetic operations, this flag indicates an overflow condition when the result in the Accumulator is greater than the maximum possible number (+127) or is less than the minimum possible number (â€“128). This overflow condition is determined by examining the sign bits of the operands.
+    The Parity/Overflow (P/V) Flag is set to a specific state depending on the operation being performed. For arithmetic operations, this flag indicates an overflow condition when the result in the Accumulator is greater than the maximum possible number (+127) or is less than the minimum possible number (–128). This overflow condition is determined by examining the sign bits of the operands.
 
     For addition, operands with different signs never cause overflow. When adding operands with similar signs and the result contains a different sign, the Overflow Flag is set, as shown in the following example.
 
@@ -142,7 +141,7 @@
     +105  =  0110 1001  AUGEND
     ------------------------------------
     +225  =  1110 0001  (-95)    SUM
-    The two numbers added together result in a number that exceeds +127 and the two positive operands result in a negative number (â€“95), which is incorrect. The Overflow Flag is therefore set.
+    The two numbers added together result in a number that exceeds +127 and the two positive operands result in a negative number (–95), which is incorrect. The Overflow Flag is therefore set.
 
     For subtraction, overflow can occur for operands of unalike signs. Operands of alike signs never cause overflow, as shown in the following example.
 
@@ -186,99 +185,66 @@
     A negative number is represented by the twos complement of the equivalent positive number. 
     The total range for negative numbers is -1 to -128.
 
+    @details   ~
     @author    ifknot
-    @date      15.11.2022
-    @copyright © ifknot, 2022. All right reserved.
+    @date      22.11.2022
+    @copyright � ifknot, 2022. All right reserved.
 
 **/
-
 #pragma once
 
-#include <array>
-#include <cstdint>
-#include <iostream>
+#include "emu_registers.h"
 
-constexpr auto Z80_REGISTER_COUNT = 26;
+constexpr auto Z80_SRAM_SIZE = 26;
 
-#define _F  z80::regs.byte(z80::regs.F)
-#define _A  z80::regs.byte(z80::regs.A)
-#define _AF z80::regs.word(z80::regs.F)
-#define _B  z80::regs.byte(z80::regs.B)
-#define _C  z80::regs.byte(z80::regs.C)
-#define _BC z80::regs.word(z80::regs.B)
-#define _D  z80::regs.byte(z80::regs.D)
-#define _E  z80::regs.byte(z80::regs.E)
-#define _DE z80::regs.word(z80::regs.D)
-#define _H  z80::regs.byte(z80::regs.H)
-#define _L  z80::regs.byte(z80::regs.L)
-#define _HL z80::regs.word(z80::regs.H)
-#define _I  z80::regs.byte(z80::regs.I)
-#define _R  z80::regs.byte(z80::regs.R)
-#define _SP z80::regs.word(z80::regs.SP)
-#define _PC z80::regs.word(z80::regs.PC)
-#define _IX z80::regs.word(z80::regs.IX)
-#define _IY z80::regs.word(z80::regs.IY)
+constexpr auto F = 0;
+constexpr auto A = 1;
+constexpr auto B = 2;
+constexpr auto C = 3;
+constexpr auto D = 4;
+constexpr auto E = 5;
+constexpr auto H = 6;
+constexpr auto L = 7;
+constexpr auto I = 8;
+constexpr auto R = 9;
+constexpr auto SP = 10;
+constexpr auto PC = 12;
+constexpr auto IX = 14;
+constexpr auto IY = 16;
+constexpr auto SHADOW = 18;
 
-#define CARRY   0b00000001
-#define NEGATE  0b00000010
-#define PARITY_OVERFLOW 0b00000100
-#define HALF_CARRY      0b00010000
-#define ZERO    0b01000000
-#define SIGN    0b10000000
+constexpr auto CARRY = 0b00000001;
+constexpr auto NEGATE = 0b00000010;
+constexpr auto PARITY_OVERFLOW = 0b00000100;
+constexpr auto HALF_CARRY = 0b00010000;
+constexpr auto ZERO = 0b01000000;
+constexpr auto SIGN = 0b10000000;
 
-namespace z80 {
+namespace emu {
 
-    template<size_t SIZE>
-    class registers_t final {
-
-        using register_array_t = int8_t[SIZE];
-
-    public:
-
-        static auto constexpr F = 0;
-        static auto constexpr A = 1;
-        static auto constexpr B = 2;
-        static auto constexpr C = 3;
-        static auto constexpr D = 4;
-        static auto constexpr E = 5;
-        static auto constexpr H = 6;
-        static auto constexpr L = 7;
-        static auto constexpr I = 8;
-        static auto constexpr R = 9;
-        static auto constexpr SP = 10;
-        static auto constexpr PC = 12;
-        static auto constexpr IX = 14;
-        static auto constexpr IY = 16;
-        static auto constexpr _SHADOW = 18;
-
-        inline int8_t& byte(size_t i) {
-            return sram[i];
-        }
-
-        inline int16_t& word(size_t i) {
-            return *(int16_t*)(sram + i);
-        }
-
-        void dump_registers() {
-
-        }
-
-        void dump_flags() {
-            std::cout << std::format("\nSZ H PNC\n{:08b}", flags());
-        }
-
-    private:
-
-        inline uint8_t flags() const {
-            return sram[0];
-        }
-
-        register_array_t sram;  // Z80 CPU's registers are implemented using static RAM.
-
-    };
-
-
-    static registers_t<Z80_REGISTER_COUNT> regs;
-
+    using z80_registers_t = registers_t<Z80_SRAM_SIZE>; // 208 bytes of SRAM
 
 }
+
+/*
+
+#define _F  emu::regs.byte(emu::regs.F)
+#define _A  emu::regs.byte(emu::regs.A)
+#define _AF emu::regs.word(emu::regs.F)
+#define _B  emu::regs.byte(emu::regs.B)
+#define _C  emu::regs.byte(emu::regs.C)
+#define _BC emu::regs.word(emu::regs.B)
+#define _D  emu::regs.byte(emu::regs.D)
+#define _E  emu::regs.byte(emu::regs.E)
+#define _DE emu::regs.word(emu::regs.D)
+#define _H  emu::regs.byte(emu::regs.H)
+#define _L  emu::regs.byte(emu::regs.L)
+#define _HL emu::regs.word(emu::regs.H)
+#define _I  emu::regs.byte(emu::regs.I)
+#define _R  emu::regs.byte(emu::regs.R)
+#define _SP emu::regs.word(emu::regs.SP)
+#define _PC emu::regs.word(emu::regs.PC)
+#define _IX emu::regs.word(emu::regs.IX)
+#define _IY emu::regs.word(emu::regs.IY)
+
+*/
